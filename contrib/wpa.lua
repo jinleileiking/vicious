@@ -25,23 +25,36 @@ module("vicious.contrib.wpa")
 
 -- {{{ Wireless widget type
 local function worker(format, warg)
-    if not warg then return end
+
+    na = {'N/A', 'N/A', 'N/A'}
+    if not warg then return na end
 
     local wpa_cmd = "/usr/bin/wpa_cli -i" .. warg ..  " status 2>&1"
     local f = io.popen(wpa_cmd)
     local output = f:read("*all")
     f:close()
 
-    bssid = string.match(output, 'bssid=([%d:]+)')
+    if not output then return na end
+
+    state = string.match(output, 'wpa_state=([%a]+)')
+    bssid = string.match(output, 'bssid=([%d%a:]+)')
     ssid = string.match(output, 'ssid=([%a]+)')
+    ip = string.match(output, 'ip_address=([%d.]+)') or 'N/A'
+
+    if not state == 'COMPLETED' then 
+        return {'N/A', 'N/A', 'N/A'}
+    end
 
     local wpa_cmd = "/usr/bin/wpa_cli -i" .. warg ..  " bss " .. bssid .. " 2>&1"
     local f = io.popen(wpa_cmd)
     local output = f:read("*all")
+    f:close()
+
+    if not output then return na end
 
     qual = string.match(output, 'qual=([%d]+)')
 
-    return {ssid, qual}
+    return {ssid, qual, ip}
 end
 -- }}}
 

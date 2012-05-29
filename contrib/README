@@ -92,6 +92,10 @@ vicious.contrib.wpa
   - $3 returns the ip of your wireless lan
   - $4 returns the bssid of your wireless lan
 
+vicious.contrib.dns
+  - Using '/etc/resolv.conf' to show your dns server
+  - return 1nd as the first dns ip, 2rd as usage of second dns ip, etc.
+
 Usage examples
 --------------
 Pulse Audio widget
